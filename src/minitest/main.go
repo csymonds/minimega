@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 )
 
@@ -84,10 +85,38 @@ func runCommands(mm *miniclient.Conn, file string) (string, error) {
 
 	s := bufio.NewScanner(f)
 
+
 	for s.Scan() {
 		// Can't use Compile since minimega, not minitest, registers handlers
 		// with minicli
 		cmd := &minicli.Command{Original: s.Text()}
+
+		if strings.HasPrefix(cmd.Original, "$(") {
+		var op func(string) string
+		op = func(s string) string {
+			// the "no op"
+			return s
+		}
+
+			i := strings.Index(cmd.Original, ")")
+			cmd.Original = cmd.Original[2:i]
+			//  tokenize
+			parts := strings.Split(cmd.Original, " ")
+			switch parts[2] {
+			        case "<":
+			                // convert parts[3] to int
+			                op = func(s string) string {
+						//convert s to string
+						return strconv.FormatBool(true)
+					}
+			        case ">":
+			        case "=":
+			        case "<=":
+			        case ">=":
+			        case "|":
+			}
+			return op(s.Text()), err
+		}
 
 		if len(cmd.Original) > 0 {
 			res += fmt.Sprintf("## %v\n", cmd.Original)

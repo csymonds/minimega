@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 )
 
@@ -77,6 +76,7 @@ func logSetup() {
 func runCommands(mm *miniclient.Conn, file string) (string, error) {
 	var res string
 	var err error
+	var tar string
 
 	f, err := os.Open(file)
 	if err != nil {
@@ -91,37 +91,24 @@ func runCommands(mm *miniclient.Conn, file string) (string, error) {
 		// with minicli
 		cmd := &minicli.Command{Original: s.Text()}
 
-		if strings.HasPrefix(cmd.Original, "$(") {
-		var op func(string) string
-		op = func(s string) string {
-			// the "no op"
-			return s
-		}
 
-			i := strings.Index(cmd.Original, ")")
-			cmd.Original = cmd.Original[2:i]
-			//  tokenize
-			parts := strings.Split(cmd.Original, " ")
-			switch parts[2] {
-			        case "<":
-			                // convert parts[3] to int
-			                op = func(s string) string {
-						//convert s to string
-						return strconv.FormatBool(true)
-					}
-			        case ">":
-			        case "=":
-			        case "<=":
-			        case ">=":
-			        case "|":
-			}
-			return op(s.Text()), err
+		if strings.Contains(cmd.Original, "|") {
+			i := strings.Index(cmd.Original, "|")
+			tar = cmd.Original[i+2:]
+			cmd.Original = cmd.Original[:i]
+			log.Debug(cmd.Original)
+			log.Debug(tar)
+			//return op(s.Text()), err
 		}
 
 		if len(cmd.Original) > 0 {
 			res += fmt.Sprintf("## %v\n", cmd.Original)
 		} else {
 			res += "\n"
+		}
+
+		if len(tar) > 0 {
+			res += fmt.Sprintf("## Piped to: %v\n", tar)
 		}
 
 		for resps := range mm.Run(cmd) {

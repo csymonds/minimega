@@ -722,7 +722,7 @@ var UI = {
             val = WebUtil.readSetting(name, defVal);
         }
         WebUtil.setSetting(name, val);
-	UI.updateSetting(name);
+        UI.updateSetting(name);
         return val;
     },
 

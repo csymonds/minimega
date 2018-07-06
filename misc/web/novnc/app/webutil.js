@@ -117,7 +117,7 @@ export function initSettings (callback /*, ...callbackArgs */) {
             }
         });
     } else {
-	settings = {};
+        settings = {};
         if (callback) {
             callback.apply(this, callbackArgs);
         }
@@ -126,7 +126,7 @@ export function initSettings (callback /*, ...callbackArgs */) {
 
 // Update the settings cache, but do not write to permanent storage
 export function setSetting (name, value) {
-	settings[name] = value;
+        settings[name] = value;
 }
 
 // No days means only for this browser session
@@ -135,7 +135,7 @@ export function writeSetting (name, value) {
     if (settings[name] === value) return;
     settings[name] = value;
     if (window.chrome && window.chrome.storage) {
-    	window.chrome.storage.sync.set(settings);
+        window.chrome.storage.sync.set(settings);
     } else {
         localStorage.setItem(name, value);
     }
@@ -145,10 +145,10 @@ export function readSetting (name, defaultValue) {
     "use strict";
     var value;
     if ((name in settings) || (window.chrome && window.chrome.storage)) {
-	value = settings[name];
+        value = settings[name];
     } else {
         value = localStorage.getItem(name);
-	settings[name] = value;
+        settings[name] = value;
     }
     if (typeof value === "undefined") {
         value = null;

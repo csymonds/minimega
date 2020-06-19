@@ -57,4 +57,4 @@ cd $TARGET
 GOPATH=$ROOT $SDK/bin/gcloud app deploy --verbosity=debug --project pivotal-sonar-90317 --version 1
 
 # update minimega.org
-#GOPATH=$TARGET $SDK/bin/gcloud app deploy --quiet --project even-electron-88116 --version 1
+#GOPATH=$ROOT $SDK/bin/gcloud app deploy --verbosity=debug --project even-electron-88116 --version 1
